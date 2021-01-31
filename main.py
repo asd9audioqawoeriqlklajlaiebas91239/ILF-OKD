@@ -296,7 +296,9 @@ class IDF_OKD:
 
         print('class 0 precision: ', np.sum(confusion_matrix[0, 0]) / np.sum(confusion_matrix[:, 0]))
         print('class 1 precision: ', np.sum(confusion_matrix[1, 1]) / np.sum(confusion_matrix[:, 1]))
-
+        
+        sr, profit = get_sharpe_ratio(rets, dates)
+        print('Sharpe Ratio: ', sr)
 
 
 def main(args):
