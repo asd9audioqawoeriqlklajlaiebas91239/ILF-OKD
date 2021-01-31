@@ -259,7 +259,7 @@ class IDF_OKD:
 
                     # date, dates, rets, ret_data, ef, idx
                     num_x = i * b + b
-                    dates, rets = make_trading_decision(self.check_result_test[i][1], dates, rets, self.test_ret, input_x_ef, num_x)
+                    dates, rets = make_trading_decision(self.check_result_test[num_x][1], dates, rets, self.test_ret, input_x_ef, num_x)
 
                     for t, p in zip(actual.view(-1), preds.view(-1)):
                         confusion_matrix[t.long(), p.long()] += 1
