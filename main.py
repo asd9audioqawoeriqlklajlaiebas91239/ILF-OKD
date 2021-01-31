@@ -45,26 +45,26 @@ class IDF_OKD:
         self.seq_len = seq_len
 
         ## train X ##
-        self.train_x_ef = Input_ef[: train_size]
-        self.train_x_et = Input_et[: train_size]
-        self.train_x_co = Input_co[: train_size]
-        self.train_x_pt = Input_pt[: train_size]
-        self.train_x_vt = Input_vt[: train_size]
+        self.train_x_ef = torch.tensor(Input_ef[: train_size]).float().to(args.cuda)
+        self.train_x_et = torch.tensor(Input_et[: train_size]).float().to(args.cuda)
+        self.train_x_co = torch.tensor(Input_co[: train_size]).float().to(args.cuda)
+        self.train_x_pt = torch.tensor(Input_pt[: train_size]).float().to(args.cuda)
+        self.train_x_vt = torch.tensor(Input_vt[: train_size]).float().to(args.cuda)
         self.train_x_comp_idx = Input_comp_idx[: train_size]
 
         ## train y ##
-        self.train_y = Label_y[: train_size]
+        self.train_y = torch.tensor(Label_y[: train_size]).long().to(args.cuda)
 
         ## test X ##
-        self.test_x_ef = Input_ef[train_size:]
-        self.test_x_et = Input_et[train_size:]
-        self.test_x_co = Input_co[train_size:]
-        self.test_x_pt = Input_pt[train_size:]
-        self.test_x_vt = Input_vt[train_size:]
+        self.test_x_ef = torch.tensor(Input_ef[train_size:]).float().to(args.cuda)
+        self.test_x_et = torch.tensor(Input_et[train_size:]).float().to(args.cuda)
+        self.test_x_co = torch.tensor(Input_co[train_size:]).float().to(args.cuda)
+        self.test_x_pt = torch.tensor(Input_pt[train_size:]).float().to(args.cuda)
+        self.test_x_vt = torch.tensor(Input_vt[train_size:]).float().to(args.cuda)
         self.test_x_comp_idx = Input_comp_idx[train_size: ]
 
         ## test y ##
-        self.test_y = Label_y[train_size: ]
+        self.test_y = torch.tensor(Label_y[train_size: ]).long().to(args.cuda)
         self.test_ret = ret[train_size * self.batch:]
 
         self.company_list = company_list
@@ -78,6 +78,9 @@ class IDF_OKD:
         self.optimizer_t_graph_t_ef = torch.optim.SGD(list(self.t_graph.parameters()) + list(self.t_ef.parameters()),  lr=self.learning_rate)
         self.student_net_params = list(self.s_graph.named_parameters()) + list(self.s_ef.named_parameters())
         self.teacher_net_params = list(self.t_graph.named_parameters()) + list(self.t_ef.named_parameters())
+        self.criterion_out = nn.CrossEntropyLoss().to(args.cuda)
+        self.criterion_g = nn.MSELoss().to(args.cuda)
+        self.criterion_ef = nn.MSELoss().to(args.cuda)
         self.profits = []
 
         # print(sum(p.numel() for p in self.teacher_net.parameters() if p.requires_grad))
@@ -142,17 +145,6 @@ class IDF_OKD:
 
     def batch_train(self, epochs):
 
-        self.train_x_ef = torch.tensor(self.train_x_ef).float().to(args.cuda)
-        self.train_x_et = torch.tensor(self.train_x_et).float().to(args.cuda)
-        self.train_y = torch.tensor(self.train_y).long().to(args.cuda)
-        # print(self.train_y.size())
-        self.train_x_pt = torch.tensor(self.train_x_pt).float().to(args.cuda)
-        self.train_x_co = torch.tensor(self.train_x_co).float().to(args.cuda)
-        self.train_x_vt = torch.tensor(self.train_x_vt).float().to(args.cuda)
-        criterion_out = nn.CrossEntropyLoss().to(args.cuda)
-        criterion_g = nn.MSELoss().to(args.cuda)
-        criterion_ef = nn.MSELoss().to(args.cuda)
-
         for epoch in range(epochs):
             print('EPOCH: ', epoch + 1)
             a = datetime.now()
@@ -193,10 +185,10 @@ class IDF_OKD:
 
                 out1_sub, _, _ = self.s_ef(input_x_ef, t_graph)
 
-                loss1 = criterion_out(out1, actual)
-                loss1_graph = criterion_g(t_graph, s_graph)
-                loss1_ef = criterion_ef(ef1, ef2)
-                loss1_sub = criterion_out(out1_sub, actual)
+                loss1 = self.criterion_out(out1, actual)
+                loss1_graph = self.criterion_g(t_graph, s_graph)
+                loss1_ef = self.criterion_ef(ef1, ef2)
+                loss1_sub = self.criterion_out(out1_sub, actual)
 
                 loss = loss1 + self.alpha * loss1_sub + self.beta * loss1_graph + self.gamma * loss1_ef
                 _ = self.Update(loss, self.optimizer_t_graph_t_ef, 'teacher')
@@ -209,10 +201,10 @@ class IDF_OKD:
                 t_graph = self.t_graph(input_x_et, input_x_co, input_x_pt, input_x_vt, self.train_x_comp_idx[i])
                 _, ef1, _ = self.t_ef(input_x_ef, t_graph)
 
-                loss2 = criterion_out(out2_copy, actual)
-                loss2_graph = criterion_g(t_graph_copy, s_graph_copy)
-                loss2_ef = criterion_ef(ef1, ef2_copy)
-                loss2_sub = criterion_out(out2_sub, actual)
+                loss2 = self.criterion_out(out2_copy, actual)
+                loss2_graph = self.criterion_g(t_graph_copy, s_graph_copy)
+                loss2_ef = self.criterion_ef(ef1, ef2_copy)
+                loss2_sub = self.criterion_out(out2_sub, actual)
 
                 loss = loss2 + self.alpha * loss2_sub + self.beta * loss2_graph + self.gamma * loss2_ef
 
@@ -241,13 +233,6 @@ class IDF_OKD:
                 self.batch_test(epoch)
 
     def batch_test(self, epoch):
-
-        self.test_x_ef = torch.tensor(self.test_x_ef).float().to(args.cuda)
-        self.test_x_et = torch.tensor(self.test_x_et).float().to(args.cuda)
-        self.test_y = torch.tensor(self.test_y).long().to(args.cuda)
-        self.test_x_pt = torch.tensor(self.test_x_pt).float().to(args.cuda)
-        self.test_x_co = torch.tensor(self.test_x_co).float().to(args.cuda)
-        self.test_x_vt = torch.tensor(self.test_x_vt).float().to(args.cuda)
 
         a = datetime.now()
 
@@ -313,12 +298,11 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='SePaL')
 
-    parser.add_argument('--model', type=str, default='IDF-OKD',
-                        choices=['Event'], help='Event (default: Event)')
+    parser.add_argument('--model', type=str, default='IDF-OKD')
     parser.add_argument('--batch_size', type=int, default=2,
                         help='batch size for training (default: 16)')
-    parser.add_argument('--epochs', type=int, default=400,
-                        help='number of iterations to train (default: 3500)')
+    parser.add_argument('--epochs', type=int, default=50,
+                        help='number of iterations to train (default: 50)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='enables CUDA training')
     parser.add_argument('--seed', type=int, default=2,
@@ -335,13 +319,13 @@ if __name__ == '__main__':
                         help='it can be activated with RavenPack API access code')
     parser.add_argument('--test_interval', type=int, default=1,
                         help='how many iterations between testing phases')
-    parser.add_argument('--seed', type=int, default=200,help='random seed')
     parser.add_argument('--alpha', type=float, default=0.2)
     parser.add_argument('--beta', type=float, default=0.05)
     parser.add_argument('--gamma', type=float, default=0.1)
     parser.add_argument('--Lambda', type=float, default=0.9)
 
     args = parser.parse_args()
+    
     if torch.cuda.is_available():
         args.cuda = 'cuda'
         torch.cuda.manual_seed_all(args.seed)
