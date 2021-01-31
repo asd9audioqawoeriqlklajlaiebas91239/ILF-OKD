@@ -335,12 +335,18 @@ if __name__ == '__main__':
                         help='it can be activated with RavenPack API access code')
     parser.add_argument('--test_interval', type=int, default=1,
                         help='how many iterations between testing phases')
+    parser.add_argument('--seed', type=int, default=200,help='random seed')
     parser.add_argument('--alpha', type=float, default=0.2)
     parser.add_argument('--beta', type=float, default=0.05)
     parser.add_argument('--gamma', type=float, default=0.1)
     parser.add_argument('--Lambda', type=float, default=0.9)
 
     args = parser.parse_args()
-    args.cuda = 'cuda' if torch.cuda.is_available() else 'cpu'
+    if torch.cuda.is_available():
+        args.cuda = 'cuda'
+        torch.cuda.manual_seed_all(args.seed)
+    else:
+        args.cuda = 'cpu'
+    np.random.seed(args.seed)
 
     main(args)
