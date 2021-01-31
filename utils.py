@@ -53,7 +53,7 @@ def read_data(args):
     return Input_ef, Input_et, Input_co, Input_pt, Input_vt, Label_y, company_list, company_dates, Input_comp_idx, ret
 
 
-def get_sharpe_ratio(self, ret_dict, dates):
+def get_sharpe_ratio(ret_dict, dates):
     dates = sorted(dates)
     res = []
     profit = []
@@ -70,13 +70,13 @@ def get_sharpe_ratio(self, ret_dict, dates):
 
     for _ in range(now, len(dates)):
         profit.append(money)
-    print(len(profit), len(dates))
+
+    assert len(profit) == len(dates)
 
     res = pd.DataFrame(np.array(res))
     r = res.diff()
     sr = r.mean() / r.std()
-    self.profits.append(profit)
-    return sr
+    return sr, profit
 
 def make_trading_decision(date, dates, rets, ret_data, ef, idx):
 
@@ -87,7 +87,7 @@ def make_trading_decision(date, dates, rets, ret_data, ef, idx):
         ret = ret_data[idx]
     else:
         ret = -1 * ret_data[idx]
-    # ret = abs(self.test_ret[i])
+    
     rets[date].append(ret)
 
     if date not in dates:
@@ -96,7 +96,6 @@ def make_trading_decision(date, dates, rets, ret_data, ef, idx):
     return dates, rets
 
 def compute_factor_weights(attn, factors, comp_name_dict, company_list, num_x):
-
 
     #################### POSITIVE ########################
     attn = attn.cpu().squeeze(0)
