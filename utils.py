@@ -80,7 +80,7 @@ def get_sharpe_ratio(ret_dict, dates):
 
 def make_trading_decision(date, dates, rets, ret_data, ef, idx):
 
-    # print('item: ', preds.item())
+    ef = ef.view(-1, 7)
     css = ef.cpu().numpy().tolist()
 
     if css[-1][3] >= 0:
