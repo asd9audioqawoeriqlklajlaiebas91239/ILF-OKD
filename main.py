@@ -40,7 +40,7 @@ class IDF_OKD:
 
         train_size = int(0.7 * len(Input_ef))
         self.learning_rate = 0.01
-        self.check_result_train = company_dates[: train_size]
+        self.check_result_train = company_dates[: train_size * self.batch]
         self.check_result_test = company_dates[train_size * self.batch: ]
         self.seq_len = seq_len
 
@@ -258,7 +258,7 @@ class IDF_OKD:
                     _, preds = torch.max(out2, 1)
 
                     # date, dates, rets, ret_data, ef, idx
-                    num_x = i * b + b
+                    num_x = i * self.batch + b
                     dates, rets = make_trading_decision(self.check_result_test[num_x][1], dates, rets, self.test_ret, input_x_ef, num_x)
 
                     for t, p in zip(actual.view(-1), preds.view(-1)):
