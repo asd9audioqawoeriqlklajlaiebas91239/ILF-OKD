@@ -154,7 +154,7 @@ class teacher_ef(nn.Module):
             outs.append(hn)
 
         hc1 = torch.cat(outs, dim=0).unsqueeze(0)
-        hc1 = hc1.view(self.batch, 70, -1)
+        hc1 = hc1.view(self.batch, 7 * self.seq_len, -1)
         new_ef = self.RankAttn(hc1, hc1, hc1, None)
         new_ef = new_ef.view(self.batch, -1)
         new_ef = F.tanh(self.c2h(new_ef).view(self.batch, -1))
