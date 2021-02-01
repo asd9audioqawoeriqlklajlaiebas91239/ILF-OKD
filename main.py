@@ -319,6 +319,8 @@ if __name__ == '__main__':
                         help='it can be activated with RavenPack API access code')
     parser.add_argument('--test_interval', type=int, default=1,
                         help='how many iterations between testing phases')
+    parser.add_argument('--mode', type=str, default='price_spike',
+                        choices=['volume_spike'], help='different financial tasks')
     parser.add_argument('--alpha', type=float, default=0.2)
     parser.add_argument('--beta', type=float, default=0.05)
     parser.add_argument('--gamma', type=float, default=0.1)
