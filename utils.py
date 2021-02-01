@@ -12,8 +12,17 @@ def read_data(args):
     batch = args.batch_size
     with open(path + "input_ef.pkl", "rb") as f:
         input_ef = np.array(pickle.load(f))
-    with open(path + "input_y.pkl", "rb") as f:
-        label_y = np.array(pickle.load(f))
+  
+    if args.mode == 'price_spike':
+        with open(path + "input_y_price.pkl", "rb") as f:
+            label_y = np.array(pickle.load(f))
+    elif args.mode == 'volume_spike':
+         with open(path + "input_y_volume.pkl", "rb") as f:
+            label_y = np.array(pickle.load(f))
+    else:
+        raise ValueError
+        
+    
     with open(path + "companies_list.pkl", 'rb') as f:
         company_list = pickle.load(f)
     with open(path + "input_et.pkl", "rb") as f:
