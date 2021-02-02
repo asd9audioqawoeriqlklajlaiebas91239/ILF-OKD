@@ -211,7 +211,7 @@ class IDF_OKD:
                                              self.gamma * loss2_ef / self.seq_len
                 _ = self.Update(loss, self.optimizer_s_graph_s_ef, 'student')
 
-                Loss += loss
+                Loss += loss.item()
 
                 for t, p in zip(actual.view(-1), preds.view(-1)):
                     confusion_matrix[t.long(), p.long()] += 1
