@@ -38,7 +38,7 @@ class IDF_OKD:
         self.cnt_s = 0
         self.fisher_s = {}
 
-        train_size = int(0.7 * len(Input_ef))
+        train_size = int(args.train_test_split * len(Input_ef))
         self.learning_rate = 0.01
         self.check_result_train = company_dates[: train_size * self.batch]
         self.check_result_test = company_dates[train_size * self.batch: ]
@@ -190,7 +190,8 @@ class IDF_OKD:
                 loss1_ef = self.criterion_ef(ef1, ef2)
                 loss1_sub = self.criterion_out(out1_sub, actual)
 
-                loss = loss1 + self.alpha * loss1_sub + self.beta * loss1_graph + self.gamma * loss1_ef
+                loss1 + self.alpha * loss1_sub + self.beta * loss1_graph / (len(self.company_list) * self.seq_len) +\
+                                             self.gamma * loss1_ef / self.seq_len
                 _ = self.Update(loss, self.optimizer_t_graph_t_ef, 'teacher')
 
                 ## student losses ##
@@ -206,8 +207,8 @@ class IDF_OKD:
                 loss2_ef = self.criterion_ef(ef1, ef2_copy)
                 loss2_sub = self.criterion_out(out2_sub, actual)
 
-                loss = loss2 + self.alpha * loss2_sub + self.beta * loss2_graph + self.gamma * loss2_ef
-
+                loss = loss2 + self.alpha * loss2_sub + self.beta * loss2_graph / (len(self.company_list) * self.seq_len) +\
+                                             self.gamma * loss2_ef / self.seq_len
                 _ = self.Update(loss, self.optimizer_s_graph_s_ef, 'student')
 
                 Loss += loss
@@ -321,6 +322,7 @@ if __name__ == '__main__':
                         help='how many iterations between testing phases')
     parser.add_argument('--mode', type=str, default='price_spike',
                         choices=['volume_spike'], help='different financial tasks')
+    parser.add_argument('--train_test_split', type=float, default=0.8)
     parser.add_argument('--alpha', type=float, default=0.2)
     parser.add_argument('--beta', type=float, default=0.05)
     parser.add_argument('--gamma', type=float, default=0.1)
