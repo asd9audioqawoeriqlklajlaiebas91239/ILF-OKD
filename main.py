@@ -135,7 +135,7 @@ class IDF_OKD:
         loss.backward()
 
         with torch.no_grad():
-            action = self._updata_fisher(1, network_name)
+            action = self._updata_fisher(self.batch, network_name)
 
         if action:
             optimizer.step()
