@@ -174,38 +174,38 @@ class IDF_OKD:
                 t_graph = self.t_graph(input_x_et, input_x_co, input_x_pt, input_x_vt, self.train_x_comp_idx[i])
                 s_graph = self.s_graph(input_x_et, input_x_co, input_x_pt, input_x_vt, self.train_x_comp_idx[i])
                 s_graph_copy = s_graph.detach().requires_grad_()
-                t_graph_copy = t_graph.detach().requires_grad_()
 
                 out1, ef1, _ = self.t_ef(input_x_ef, t_graph)
                 out2, ef2, _ = self.s_ef(input_x_ef, s_graph)
-
                 ef2_copy = ef2.detach().requires_grad_()
-                out2_copy = out2.detach().requires_grad_()
+                
                 _, preds = torch.max(out2, 1)
 
-                out1_sub, _, _ = self.t_ef(input_x_ef, s_graph)
+                _, sub_t_ef, _ = self.t_ef(input_x_ef, s_graph)
+                _, sub_s_ef, _ = self.s_ef(input_x_ef, t_graph)
 
                 loss1 = self.criterion_out(out1, actual)
                 loss1_graph = self.criterion_g(t_graph, s_graph)
                 loss1_ef = self.criterion_ef(ef1, ef2)
-                loss1_sub = self.criterion_out(out1_sub, actual)
+                loss1_sub = self.criterion_out(sub_t_ef, sub_s_ef)
 
-                loss1 + self.alpha * loss1_sub + self.beta * loss1_graph / (len(self.company_list) * self.seq_len) +\
+                loss = loss1 + self.alpha * loss1_sub + self.beta * loss1_graph / (len(self.company_list) * self.seq_len) +\
                                              self.gamma * loss1_ef / self.seq_len
                 _ = self.Update(loss, self.optimizer_t_graph_t_ef, 'teacher')
 
                 ## student losses ##
 
                 self.optimizer_s_graph_s_ef.zero_grad()
-
-                out2_sub, ef2_sub, _ = self.s_ef(input_x_ef, s_graph_copy)
+                
                 t_graph = self.t_graph(input_x_et, input_x_co, input_x_pt, input_x_vt, self.train_x_comp_idx[i])
                 _, ef1, _ = self.t_ef(input_x_ef, t_graph)
+                _, sub_t_ef, _ = self.t_ef(input_x_ef, s_graph_copy)
+                _, sub_s_ef, _ = self.s_ef(input_x_ef, t_graph)
 
-                loss2 = self.criterion_out(out2_copy, actual)
-                loss2_graph = self.criterion_g(t_graph_copy, s_graph_copy)
+                loss2 = self.criterion_out(out2, actual)
+                loss2_graph = self.criterion_g(t_graph, s_graph_copy)
                 loss2_ef = self.criterion_ef(ef1, ef2_copy)
-                loss2_sub = self.criterion_out(out2_sub, actual)
+                loss2_sub = self.criterion_out(sub_t_ef, sub_s_ef)
 
                 loss = loss2 + self.alpha * loss2_sub + self.beta * loss2_graph / (len(self.company_list) * self.seq_len) +\
                                              self.gamma * loss2_ef / self.seq_len
