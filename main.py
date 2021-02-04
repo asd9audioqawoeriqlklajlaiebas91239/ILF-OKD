@@ -183,7 +183,7 @@ class IDF_OKD:
                 out2_copy = out2.detach().requires_grad_()
                 _, preds = torch.max(out2, 1)
 
-                out1_sub, _, _ = self.s_ef(input_x_ef, t_graph)
+                out1_sub, _, _ = self.t_ef(input_x_ef, s_graph)
 
                 loss1 = self.criterion_out(out1, actual)
                 loss1_graph = self.criterion_g(t_graph, s_graph)
@@ -198,7 +198,7 @@ class IDF_OKD:
 
                 self.optimizer_s_graph_s_ef.zero_grad()
 
-                out2_sub, ef2_sub, _ = self.t_ef(input_x_ef, s_graph_copy)
+                out2_sub, ef2_sub, _ = self.s_ef(input_x_ef, s_graph_copy)
                 t_graph = self.t_graph(input_x_et, input_x_co, input_x_pt, input_x_vt, self.train_x_comp_idx[i])
                 _, ef1, _ = self.t_ef(input_x_ef, t_graph)
 
