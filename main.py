@@ -81,6 +81,7 @@ class IDF_OKD:
         self.criterion_out = nn.CrossEntropyLoss().to(args.cuda)
         self.criterion_g = nn.MSELoss().to(args.cuda)
         self.criterion_ef = nn.MSELoss().to(args.cuda)
+        self.criterion_sub = nn.MSELoss().to(args.cuda)
         self.profits = []
 
         # print(sum(p.numel() for p in self.teacher_net.parameters() if p.requires_grad))
