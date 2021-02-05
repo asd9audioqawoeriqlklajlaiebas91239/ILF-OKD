@@ -182,12 +182,11 @@ class IDF_OKD:
                 _, preds = torch.max(out2, 1)
 
                 _, sub_t_ef, _ = self.t_ef(input_x_ef, s_graph)
-                _, sub_s_ef, _ = self.s_ef(input_x_ef, t_graph)
 
                 loss1 = self.criterion_out(out1, actual)
                 loss1_graph = self.criterion_g(t_graph, s_graph)
                 loss1_ef = self.criterion_ef(ef1, ef2)
-                loss1_sub = self.criterion_out(sub_t_ef, sub_s_ef)
+                loss1_sub = self.criterion_out(sub_t_ef, ef1)
 
                 loss = loss1 + self.alpha * loss1_sub + self.beta * loss1_graph / (len(self.company_list) * self.seq_len) +\
                                              self.gamma * loss1_ef / self.seq_len
@@ -198,14 +197,12 @@ class IDF_OKD:
                 self.optimizer_s_graph_s_ef.zero_grad()
                 
                 t_graph = self.t_graph(input_x_et, input_x_co, input_x_pt, input_x_vt, self.train_x_comp_idx[i])
-                _, ef1, _ = self.t_ef(input_x_ef, t_graph)
-                _, sub_t_ef, _ = self.t_ef(input_x_ef, s_graph_copy)
                 _, sub_s_ef, _ = self.s_ef(input_x_ef, t_graph)
 
                 loss2 = self.criterion_out(out2, actual)
                 loss2_graph = self.criterion_g(t_graph, s_graph_copy)
                 loss2_ef = self.criterion_ef(ef1, ef2_copy)
-                loss2_sub = self.criterion_out(sub_t_ef, sub_s_ef)
+                loss2_sub = self.criterion_out(sub_s_ef, ef2_copy)
 
                 loss = loss2 + self.alpha * loss2_sub + self.beta * loss2_graph / (len(self.company_list) * self.seq_len) +\
                                              self.gamma * loss2_ef / self.seq_len
