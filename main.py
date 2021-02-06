@@ -150,7 +150,7 @@ class IDF_OKD:
             print('EPOCH: ', epoch + 1)
             a = datetime.now()
 
-            if epoch == 20 or epoch == 40:
+            if epoch == 80 or epoch == 160:
                 self.optimizer_s_graph_s_ef = torch.optim.SGD(
                     list(self.s_graph.parameters()) + list(self.s_ef.parameters()), lr=self.learning_rate * 0.1)
                 self.optimizer_t_graph_t_ef = torch.optim.SGD(
