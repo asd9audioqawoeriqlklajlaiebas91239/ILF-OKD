@@ -302,8 +302,8 @@ if __name__ == '__main__':
     parser.add_argument('--model', type=str, default='IDF-OKD')
     parser.add_argument('--batch_size', type=int, default=2,
                         help='batch size for training (default: 16)')
-    parser.add_argument('--epochs', type=int, default=50,
-                        help='number of iterations to train (default: 50)')
+    parser.add_argument('--epochs', type=int, default=200,
+                        help='number of iterations to train (default: 200)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='enables CUDA training')
     parser.add_argument('--seed', type=int, default=2,
