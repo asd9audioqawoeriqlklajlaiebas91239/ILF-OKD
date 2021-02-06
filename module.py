@@ -7,7 +7,7 @@ import math
 
 
 class student_graph(nn.Module):
-    def __init__(self, comps, seq_len, args, hidden_dim=100, output_dim=2, bias=True):
+    def __init__(self, comps, seq_len, args, hidden_dim=200, output_dim=2, bias=True):
         super(student_graph, self).__init__()
 
         self.comps = comps
@@ -31,7 +31,7 @@ class student_graph(nn.Module):
 
 
 class student_ef(nn.Module):
-    def __init__(self, comps, seq_len, args, hidden_dim=100, layer_dim=2,
+    def __init__(self, comps, seq_len, args, hidden_dim=200, layer_dim=2,
                  output_dim=2, bias=True):
         super(student_ef, self).__init__()
 
@@ -69,7 +69,7 @@ class student_ef(nn.Module):
 
 
 class teacher_graph(nn.Module):
-    def __init__(self, comps, seq_len, args, input_dim=16, hidden_dim=459, layer_dim=2, output_dim=2, bias=True):
+    def __init__(self, comps, seq_len, args, input_dim=16, hidden_dim=200, layer_dim=2, output_dim=2, bias=True):
         super(teacher_graph, self).__init__()
 
         self.comps = comps
@@ -116,7 +116,7 @@ class teacher_graph(nn.Module):
 
 
 class teacher_ef(nn.Module):
-    def __init__(self, comps, seq_len, args, input_dim=16, hidden_dim=459, layer_dim=2,
+    def __init__(self, comps, seq_len, args, input_dim=16, hidden_dim=200, layer_dim=2,
                  output_dim=2, bias=True):
         super(teacher_ef, self).__init__()
 
