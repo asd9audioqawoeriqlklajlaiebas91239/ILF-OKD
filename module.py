@@ -14,7 +14,7 @@ class student_graph(nn.Module):
         self.num_comps = len(comps)
         self.hidden_dim = hidden_dim
         self.seq_len = seq_len
-        self.RankAttn_graph = AttentionLayer(ProbAttention(False, factor=4), len(comps), 4)
+        self.RankAttn_graph = AttentionLayer(ProbAttention(False, factor=args.k1), len(comps), 4)
         self.batch = args.batch_size
 
     def forward(self, et, mp, co, vol, comp_idx):
@@ -47,7 +47,7 @@ class student_ef(nn.Module):
         self.R = nn.Parameter(torch.empty(size=(self.seq_len, 4, len(comps))))
         nn.init.xavier_uniform_(self.R.data, gain=1.414)
 
-        self.RankAttn = AttentionLayer(ProbAttention(False, factor=10), 7 * len(comps), 4)
+        self.RankAttn = AttentionLayer(ProbAttention(False, factor=args.k2), 7 * len(comps), 4)
 
     def forward(self, ef, comp_corr):
 
@@ -91,7 +91,7 @@ class teacher_graph(nn.Module):
         self.vol_gcn1 = nn.Sequential(nn.Linear(len(comps), hidden_dim),
                                       nn.Softmax())
 
-        self.RankAttn_graph = AttentionLayer(ProbAttention(False, factor=4), hidden_dim, 4)
+        self.RankAttn_graph = AttentionLayer(ProbAttention(False, factor=args.k1), hidden_dim, 4)
 
 
     def forward(self, et, co, pt, vt, comp_idx):
@@ -127,7 +127,7 @@ class teacher_ef(nn.Module):
         self.batch = args.batch_size
 
         self.gru_cell1 = GRUCell(hidden_dim * 7, hidden_dim * 7, layer_dim)
-        self.RankAttn = AttentionLayer(ProbAttention(False, factor=10), hidden_dim, 4)
+        self.RankAttn = AttentionLayer(ProbAttention(False, factor=args.k2), hidden_dim, 4)
 
         self.prediction = nn.Linear(7, output_dim)
 
