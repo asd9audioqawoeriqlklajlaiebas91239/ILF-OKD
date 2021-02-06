@@ -322,6 +322,8 @@ if __name__ == '__main__':
                         help='how many iterations between testing phases')
     parser.add_argument('--mode', type=str, default='price_spike',
                         choices=['volume_spike'], help='different financial tasks')
+    parser.add_argument('--k1', type=float, default=5, help='the number of salient features of corporate relational graph')
+    parser.add_argument('--k2', type=float, default=28, help='the number of salient features of event impacts')
     parser.add_argument('--lr', type=float, help='learning rate', default=0.001)
     parser.add_argument('--train_test_split', type=float, default=0.8)
     parser.add_argument('--alpha', type=float, default=0.2)
