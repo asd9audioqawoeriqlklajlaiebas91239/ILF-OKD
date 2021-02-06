@@ -324,12 +324,12 @@ if __name__ == '__main__':
                         choices=['volume_spike'], help='different financial tasks')
     parser.add_argument('--k1', type=float, default=5, help='the number of salient features of corporate relational graph')
     parser.add_argument('--k2', type=float, default=28, help='the number of salient features of event impacts')
-    parser.add_argument('--lr', type=float, help='learning rate', default=0.001)
-    parser.add_argument('--train_test_split', type=float, default=0.8)
-    parser.add_argument('--alpha', type=float, default=0.2)
-    parser.add_argument('--beta', type=float, default=0.1)
-    parser.add_argument('--gamma', type=float, default=0.1)
-    parser.add_argument('--Lambda', type=float, default=0.9)
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
+    parser.add_argument('--train_test_split', default=0.8, type=float)
+    parser.add_argument('--alpha', default=0.2, type=float)
+    parser.add_argument('--beta', default=0.1, type=float)
+    parser.add_argument('--gamma', default=0.1, type=float)
+    parser.add_argument('--Lambda', default=0.9, type=float)
 
     args = parser.parse_args()
     
