@@ -325,7 +325,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, help='learning rate', default=0.001)
     parser.add_argument('--train_test_split', type=float, default=0.8)
     parser.add_argument('--alpha', type=float, default=0.2)
-    parser.add_argument('--beta', type=float, default=0.05)
+    parser.add_argument('--beta', type=float, default=0.1)
     parser.add_argument('--gamma', type=float, default=0.1)
     parser.add_argument('--Lambda', type=float, default=0.9)
 
