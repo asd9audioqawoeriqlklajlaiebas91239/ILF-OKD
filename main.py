@@ -310,8 +310,6 @@ if __name__ == '__main__':
                         help='random seed (default: 1)')
     parser.add_argument('--path', type=str, default='dataset/',
                         help='project directory')
-    parser.add_argument('--learning_rate', type=float, default=0.01,
-                        help='the number of different event types')
     parser.add_argument('--region', type=str, default='US', choices=['Europe'],
                         help='various market regions')
     parser.add_argument('--sector', type=str, default='technology', choices=['finance', 'healthcare'],
