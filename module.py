@@ -320,3 +320,44 @@ class GRUCell(nn.Module):
         hy = newgate + inputgate * (hidden - newgate)
 
         return hy
+
+
+class MLR_graph(nn.Module):
+    def __init__(self):
+        super(MLR_graph, self).__init__()
+        self.l2 = nn.Linear(40 * 459, 128)
+        self.l3 = nn.Linear(128, 10 * 1836)
+        # self.l = nn.Linear(2048, 2)
+
+    def forward(self, input_x_et, input_x_co, input_x_pt, input_x_vt, train_x_comp_idx):
+
+        graph_v = torch.cat([input_x_et, input_x_co, input_x_pt, input_x_vt], dim=1)
+        graph_v = graph_v.view(1, -1)
+        graph_v = self.l3(self.l2(graph_v))
+        graph_v = graph_v.view(10, -1)
+        # input_x_ef = input_x_ef.view(1, -1)
+        # aggregated_f = torch.cat([self.l1(input_x_ef), self.l2(graph_v)], dim=1)
+
+        # print(aggregated_f.size())
+
+        return graph_v
+
+class MLR_ef(nn.Module):
+    def __init__(self):
+        super(MLR_ef, self).__init__()
+        self.l1 = nn.Linear(70, 128)
+        self.l2 = nn.Linear(10 * 1836, 128)
+        self.l = nn.Linear(256, 7)
+        self.o = nn.Linear(7, 2)
+
+    def forward(self, input_x_ef, graph):
+
+        input_x_ef = input_x_ef.view(1, -1)
+        graph = graph.view(1, -1)
+
+        aggregated_f = torch.cat([self.l1(input_x_ef), self.l2(graph)], dim=1)
+        ef = self.l(aggregated_f)
+        # print(aggregated_f.size())
+
+        return F.softmax(self.o(ef), dim=1), ef, None
+    
