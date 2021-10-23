@@ -8,7 +8,7 @@ import torch
 import numpy as np
 import pandas as pd
 import torch.nn as nn
-from module import teacher_ef, teacher_graph, student_graph, student_ef
+from module import *
 import os
 from tqdm import tqdm
 import torch.nn.utils.prune as prune
@@ -69,8 +69,8 @@ class IDF_OKD:
 
         self.company_list = company_list
 
-        self.s_graph = student_graph(comps=company_list, seq_len=seq_len, args=args).to(args.cuda)
-        self.s_ef = student_ef(comps=company_list, seq_len=seq_len, args=args).to(args.cuda)
+        self.s_graph = MLR_graph(comps=company_list, seq_len=seq_len, args=args).to(args.cuda)
+        self.s_ef = MLR_ef(comps=company_list, seq_len=seq_len, args=args).to(args.cuda)
         self.t_graph = student_graph(comps=company_list, seq_len=seq_len, args=args).to(args.cuda)
         self.t_ef = student_ef(comps=company_list, seq_len=seq_len, args=args).to(args.cuda)
 
